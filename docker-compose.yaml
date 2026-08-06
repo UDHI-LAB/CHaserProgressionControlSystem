@@ -3,7 +3,7 @@ services:
     build:
       # workspace の依存を解決するため、build context は monorepo のルート
       context: .
-      dockerfile: apps/chros/Dockerfile
+      dockerfile: chros/Dockerfile
     ports:
       - "3000:3000"
     environment:

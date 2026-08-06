@@ -12,14 +12,14 @@ importers:
         specifier: ^5.6.0
         version: 5.9.3
 
-  apps/chros:
+  chros:
     dependencies:
       '@chros/scoring':
         specifier: workspace:*
-        version: link:../../packages/scoring
+        version: link:../packages/scoring
       '@chros/shared':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../packages/shared
       '@prisma/client':
         specifier: ^6.15.0
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)

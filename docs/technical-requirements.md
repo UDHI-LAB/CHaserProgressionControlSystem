@@ -72,15 +72,14 @@ Console にログインを設けない。運営が触れる端末は会場 LAN �
 
 ```
 CHaserProgressionControlSystem/
-├── apps/
-│   └── chros/                  # Next.js (App Router) — Console / Viewer / API を内包
-│       ├── app/
-│       │   ├── console/        # 運営向け操作画面
-│       │   ├── display/        # 配信用 Viewer 画面
-│       │   └── api/            # Route Handlers (REST + SSE)
-│       └── prisma/
-│           ├── schema.prisma
-│           └── migrations/
+├── chros/                      # Next.js (App Router) — Console / Viewer / API を内包
+│   ├── app/
+│   │   ├── console/            # 運営向け操作画面
+│   │   ├── display/            # 配信用 Viewer 画面
+│   │   └── api/                # Route Handlers (REST + SSE)
+│   └── prisma/
+│       ├── schema.prisma
+│       └── migrations/
 ├── packages/
 │   ├── shared/                 # ドメイン型・イベント定義・Zod スキーマ（DB 非依存）
 │   └── scoring/                # スコア計算・順位計算の純粋ロジック
@@ -94,7 +93,26 @@ CHaserProgressionControlSystem/
 - `packages/shared` と `packages/scoring` は**副作用と I/O を持たない**。DB・HTTP・React に依存しない。
   こうしておくと、後で API を別プロセスに切り出す判断をしたときに、そのまま持ち出せる。
 - Next.js アプリの中では Console / Viewer / API がディレクトリで分かれているだけであり、
-  依存の向きは `app/** → packages/**` の一方向に限る。
+  依存の向きは `chros/** → packages/**` の一方向に限る。
+
+### 2.1 `apps/` を設けない理由
+
+当初は `apps/chros/` として monorepo の慣例どおり app 階層を設ける案だったが、これは採らない。
+この階層が要るのは**別々にデプロイされる成果物が複数ある**場合であり、CHroS では該当しないため。
+
+想定していた同居先はいずれも別リポジトリで管理する。
+
+| 想定 | 扱い |
+| --- | --- |
+| 大会後の記録公開（§11.3） | 別リポジトリ |
+| CHaServer の隣に常駐するログ取り込み（§11.3） | 別リポジトリ |
+
+ノードエディタ UI（§5.8）や自動抽選は工数こそ大きいが、いずれも運営が Console で触る画面であり、
+`chros/app/console/**` の一部にすぎない。**機能の独立性や工数はデプロイ単位を分ける理由にならない。**
+
+一方 `packages/` は app が1つでも残す。別リポジトリへ持ち出す際にそのまま動くことに加え、
+`package.json` に next / react / prisma を持たせないことで、
+上記の「副作用と I/O を持たない」制約がレビューではなくビルドで守られるため。
 
 ## 3. 技術スタック
 
@@ -879,7 +897,7 @@ Route Handlers で REST を提供する。Console からの操作は Server Acti
 
 | 現行 | 移行後 | 備考 |
 | --- | --- | --- |
-| `chros/` (Next.js) | `apps/chros/` | App Router 構造はおおむね流用 |
+| `chros/` (Next.js) | `chros/`（移動なし） | App Router 構造はおおむね流用。§2.1 |
 | `chros-websock/` (Express + socket.io) | 廃止 | SSE を `app/api/stream` に実装 |
 | `chros-score/` (FastAPI + lupa) | 廃止 | `packages/scoring` に TS で再実装 |
 | `chros/docs/overview.md` | `docs/requirements.md` | 集約済み |

@@ -8,7 +8,7 @@ RUN corepack enable
 WORKDIR /repo
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY apps/chros/package.json apps/chros/
+COPY chros/package.json chros/
 COPY packages/shared/package.json packages/shared/
 COPY packages/scoring/package.json packages/scoring/
 RUN pnpm install --frozen-lockfile

@@ -10,7 +10,7 @@
 pnpm workspace による monorepo で、アプリは Next.js 単体です。
 
 ```
-apps/chros/        Next.js (App Router) — Console / Viewer / API
+chros/             Next.js (App Router) — Console / Viewer / API
 packages/shared/   ドメイン型・イベント定義・Zod スキーマ（I/O を持たない）
 packages/scoring/  スコア計算の純粋ロジック（I/O を持たない）
 ```
@@ -27,7 +27,7 @@ Docker を使用する場合は、リポジトリのルートで `docker compose
 docker compose up -d db
 
 pnpm install
-cp apps/chros/.env.example apps/chros/.env
+cp chros/.env.example chros/.env
 pnpm --filter chros exec prisma migrate deploy
 pnpm dev
 ```
